@@ -28,12 +28,14 @@ class Painting {
     }
 
     public String toString() {
-        return "Картина: " + title +
-                "\nАвтор: " + author +
-                "\nГод: " + year +
-                "\nСтиль: " + style + "\n";
+        return "Kartina: " + title +
+                "\nAvtor: " + author +
+                "\nGod: " + year +
+                "\nStil: " + style + "\n";
     }
 }
+
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -57,9 +59,9 @@ class Museum {
         }
         if (pos > -1) {
             a.remove(pos);
-            System.out.println("Картина удалена: " + title);
+            System.out.println("Kartina udalena: " + title);
         } else
-            System.out.println("Такой картины нет");
+            System.out.println("Takoi kartini net");
     }
 
     void findByAuthor(String author) {
@@ -71,7 +73,7 @@ class Museum {
             }
         }
         if (!found)
-            System.out.println("Картины данного автора не найдены");
+            System.out.println("Kartini dannogo avtora ne naideni");
     }
 
     void sortByTitle() {
@@ -95,6 +97,9 @@ class Museum {
             System.out.println(a.get(i).toString());
     }
 }
+
+
+
 import java.util.Scanner;
 
 public class MuseumProject {
@@ -105,42 +110,42 @@ public class MuseumProject {
 
         Museum m = new Museum();
 
-        System.out.println("Введите количество картин");
+        System.out.println("Vvedite kol-vo kartin");
         int n = sc.nextInt();
 
         for (int i = 0; i < n; i++) {
-            System.out.println("Введите название картины");
+            System.out.println("Vvedite nazvanie kartini");
             String title = scL.nextLine();
 
-            System.out.println("Введите автора");
+            System.out.println("Vvedite avtora");
             String author = scL.nextLine();
 
-            System.out.println("Введите год создания");
+            System.out.println("Vvedite god sozdania");
             int year = sc.nextInt();
 
-            System.out.println("Введите стиль");
+            System.out.println("Vvedite stil");
             String style = scL.nextLine();
 
             Painting p = new Painting(title, author, year, style);
             m.add(p);
         }
 
-        System.out.println("\nСписок картин музея:");
+        System.out.println("\nSpisok kartin muzeya:");
         m.print();
 
-        System.out.println("Введите автора для поиска");
+        System.out.println("Vvedite avtora dlya poiska");
         String a = scL.nextLine();
         m.findByAuthor(a);
 
-        System.out.println("Введите название картины для удаления");
+        System.out.println("Vvedite nazvanie kartini dlya udaleniya");
         String t = scL.nextLine();
         m.del(t);
 
-        System.out.println("\nСортировка по названию:");
+        System.out.println("\nSort po nazvaniu:");
         m.sortByTitle();
         m.print();
 
-        System.out.println("\nСортировка по году:");
+        System.out.println("\nSort po godu:");
         m.sortByYear();
         m.print();
     }
