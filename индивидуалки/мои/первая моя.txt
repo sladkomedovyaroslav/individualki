@@ -40,9 +40,9 @@ class Avtomobil {
 
     // вывод информации
     public String toString() {
-        return "Марка автомобиля: " + marka +
-                "\nМощность: " + power +
-                "\nОбъем двигателя: " + volume;
+        return "Marka avtomobila: " + marka +
+                "\nMoshnost: " + power +
+                "\nObiem dvigatelya: " + volume;
     }
 }
 
@@ -67,44 +67,45 @@ class LegkovoyAvtomobil extends Avtomobil {
     // вывод информации
     public String toString() {
         return super.toString() +
-                "\nКоличество посадочных мест: " + seats;
+                "\nKol-vo posadochnih mest: " + seats;
     }
 }
 
 // Главный класс
+import java.util.Scanner;
 public class ExtendsAvtomobil {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         Scanner scLine = new Scanner(System.in);
 
-        System.out.println("Введите данные автомобиля");
-        System.out.print("Введите марку: ");
+        System.out.println("Vvedite dannie avto");
+        System.out.print("Vvedite marku: ");
         String marka = scLine.nextLine();
 
-        System.out.print("Введите мощность: ");
+        System.out.print("Vvedite moshnost: ");
         int power = sc.nextInt();
 
-        System.out.print("Введите объем двигателя: ");
+        System.out.print("Vvedite obiem dvigatelya: ");
         double volume = sc.nextDouble();
 
         Avtomobil a = new Avtomobil(marka, power, volume);
-        System.out.println("\nДанные автомобиля:");
+        System.out.println("\nDannie avto:");
         System.out.println(a.toString());
 
-        System.out.print("\nВведите количество посадочных мест: ");
+        System.out.print("\nVvedite kol-vo posadochnih mest: ");
         int seats = sc.nextInt();
 
         LegkovoyAvtomobil la =
                 new LegkovoyAvtomobil(marka, power, volume, seats);
 
-        System.out.println("\nДанные легкового автомобиля:");
+        System.out.println("\nDannie legkovogo avtomobilya:");
         System.out.println(la.toString());
 
-        System.out.print("\nВведите новое количество мест: ");
+        System.out.print("\nVVedite novoe kol-vo mest: ");
         int newSeats = sc.nextInt();
         la.setSeats(newSeats);
 
-        System.out.println("\nПосле изменения:");
+        System.out.println("\nPosle izmenenia:");
         System.out.println(la.toString());
     }
 }
