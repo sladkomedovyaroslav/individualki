@@ -1,0 +1,147 @@
+class Painting {
+    private String title;     // название картины
+    private String author;    // художник
+    private int year;         // год создания
+    private String style;     // стиль
+
+    Painting(String title, String author, int year, String style) {
+        this.title = title;
+        this.author = author;
+        this.year = year;
+        this.style = style;
+    }
+
+    String getTitle() {
+        return title;
+    }
+
+    String getAuthor() {
+        return author;
+    }
+
+    int getYear() {
+        return year;
+    }
+
+    String getStyle() {
+        return style;
+    }
+
+    public String toString() {
+        return "Картина: " + title +
+                "\nАвтор: " + author +
+                "\nГод: " + year +
+                "\nСтиль: " + style + "\n";
+    }
+}
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+
+class Museum {
+    ArrayList<Painting> a;
+
+    Museum() {
+        a = new ArrayList<Painting>();
+    }
+
+    void add(Painting p) {
+        a.add(p);
+    }
+
+    void del(String title) {
+        int pos = -1;
+        for (int i = 0; i < a.size(); i++) {
+            if (title.equalsIgnoreCase(a.get(i).getTitle()))
+                pos = i;
+        }
+        if (pos > -1) {
+            a.remove(pos);
+            System.out.println("Картина удалена: " + title);
+        } else
+            System.out.println("Такой картины нет");
+    }
+
+    void findByAuthor(String author) {
+        boolean found = false;
+        for (Painting p : a) {
+            if (author.equalsIgnoreCase(p.getAuthor())) {
+                System.out.println(p);
+                found = true;
+            }
+        }
+        if (!found)
+            System.out.println("Картины данного автора не найдены");
+    }
+
+    void sortByTitle() {
+        Collections.sort(a, new Comparator<Painting>() {
+            public int compare(Painting o1, Painting o2) {
+                return o1.getTitle().compareToIgnoreCase(o2.getTitle());
+            }
+        });
+    }
+
+    void sortByYear() {
+        Collections.sort(a, new Comparator<Painting>() {
+            public int compare(Painting o1, Painting o2) {
+                return o1.getYear() - o2.getYear();
+            }
+        });
+    }
+
+    void print() {
+        for (int i = 0; i < a.size(); i++)
+            System.out.println(a.get(i).toString());
+    }
+}
+import java.util.Scanner;
+
+public class MuseumProject {
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+        Scanner scL = new Scanner(System.in);
+
+        Museum m = new Museum();
+
+        System.out.println("Введите количество картин");
+        int n = sc.nextInt();
+
+        for (int i = 0; i < n; i++) {
+            System.out.println("Введите название картины");
+            String title = scL.nextLine();
+
+            System.out.println("Введите автора");
+            String author = scL.nextLine();
+
+            System.out.println("Введите год создания");
+            int year = sc.nextInt();
+
+            System.out.println("Введите стиль");
+            String style = scL.nextLine();
+
+            Painting p = new Painting(title, author, year, style);
+            m.add(p);
+        }
+
+        System.out.println("\nСписок картин музея:");
+        m.print();
+
+        System.out.println("Введите автора для поиска");
+        String a = scL.nextLine();
+        m.findByAuthor(a);
+
+        System.out.println("Введите название картины для удаления");
+        String t = scL.nextLine();
+        m.del(t);
+
+        System.out.println("\nСортировка по названию:");
+        m.sortByTitle();
+        m.print();
+
+        System.out.println("\nСортировка по году:");
+        m.sortByYear();
+        m.print();
+    }
+}

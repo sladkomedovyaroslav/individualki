@@ -1,0 +1,108 @@
+import java.util.Scanner;
+
+// Интерфейс Integer
+interface Integer {
+    Integer add(Integer x);
+    Integer sub(Integer x);
+    void print();
+}
+
+// Класс Decimal (десятичное число)
+class Decimal implements Integer {
+    int[] digits;   // массив цифр
+    int value;      // числовое значение
+
+    Decimal(int value) {
+        this.value = value;
+        String s = String.valueOf(value);
+        digits = new int[s.length()];
+        for (int i = 0; i < s.length(); i++) {
+            digits[i] = s.charAt(i) - '0';
+        }
+    }
+
+    public Integer add(Integer x) {
+        Decimal d = (Decimal) x;
+        return new Decimal(this.value + d.value);
+    }
+
+    public Integer sub(Integer x) {
+        Decimal d = (Decimal) x;
+        return new Decimal(this.value - d.value);
+    }
+
+    public void print() {
+        System.out.print("Decimal: ");
+        for (int d : digits)
+            System.out.print(d);
+        System.out.println();
+    }
+}
+
+// Класс Binary (двоичное число)
+class Binary implements Integer {
+    int[] digits;   // массив цифр
+    int value;      // значение в десятичной системе
+
+    Binary(String bin) {
+        digits = new int[bin.length()];
+        for (int i = 0; i < bin.length(); i++) {
+            digits[i] = bin.charAt(i) - '0';
+        }
+        value = Integer.parseInt(bin, 2);
+    }
+
+    public Integer add(Integer x) {
+        Binary b = (Binary) x;
+        int res = this.value + b.value;
+        return new Binary(Integer.toBinaryString(res));
+    }
+
+    public Integer sub(Integer x) {
+        Binary b = (Binary) x;
+        int res = this.value - b.value;
+        return new Binary(Integer.toBinaryString(res));
+    }
+
+    public void print() {
+        System.out.print("Binary: ");
+        for (int d : digits)
+            System.out.print(d);
+        System.out.println();
+    }
+}
+
+// Главный класс
+public class InterfaceInteger {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        Integer[] arr;
+
+        System.out.print("Введите количество элементов: ");
+        int k = sc.nextInt();
+        arr = new Integer[k];
+
+        for (int i = 0; i < k; i++) {
+            System.out.println("1 - Decimal, 2 - Binary");
+            int p = sc.nextInt();
+
+            if (p == 1) {
+                System.out.print("Введите десятичное число: ");
+                int v = sc.nextInt();
+                arr[i] = new Decimal(v);
+            }
+
+            if (p == 2) {
+                System.out.print("Введите двоичное число: ");
+                String b = sc.next();
+                arr[i] = new Binary(b);
+            }
+        }
+
+        System.out.println("\nВывод элементов:");
+        for (int i = 0; i < k; i++) {
+            arr[i].print();
+        }
+    }
+}

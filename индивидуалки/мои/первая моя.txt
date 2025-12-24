@@ -1,0 +1,110 @@
+import java.util.Scanner;
+
+// Базовый класс Автомобиль
+class Avtomobil {
+    private String marka;      // марка
+    private int power;         // мощность
+    private double volume;     // объем двигателя
+
+    Avtomobil(String marka, int power, double volume) {
+        this.marka = marka;
+        this.power = power;
+        this.volume = volume;
+    }
+
+    // getters
+    String getMarka() {
+        return marka;
+    }
+
+    int getPower() {
+        return power;
+    }
+
+    double getVolume() {
+        return volume;
+    }
+
+    // setters
+    void setMarka(String marka) {
+        this.marka = marka;
+    }
+
+    void setPower(int power) {
+        this.power = power;
+    }
+
+    void setVolume(double volume) {
+        this.volume = volume;
+    }
+
+    // вывод информации
+    public String toString() {
+        return "Марка автомобиля: " + marka +
+                "\nМощность: " + power +
+                "\nОбъем двигателя: " + volume;
+    }
+}
+
+// Производный класс Легковой автомобиль
+class LegkovoyAvtomobil extends Avtomobil {
+    private int seats; // количество посадочных мест
+
+    LegkovoyAvtomobil(String marka, int power, double volume, int seats) {
+        super(marka, power, volume);
+        this.seats = seats;
+    }
+
+    // переназначение количества мест
+    void setSeats(int seats) {
+        this.seats = seats;
+    }
+
+    int getSeats() {
+        return seats;
+    }
+
+    // вывод информации
+    public String toString() {
+        return super.toString() +
+                "\nКоличество посадочных мест: " + seats;
+    }
+}
+
+// Главный класс
+public class ExtendsAvtomobil {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        Scanner scLine = new Scanner(System.in);
+
+        System.out.println("Введите данные автомобиля");
+        System.out.print("Введите марку: ");
+        String marka = scLine.nextLine();
+
+        System.out.print("Введите мощность: ");
+        int power = sc.nextInt();
+
+        System.out.print("Введите объем двигателя: ");
+        double volume = sc.nextDouble();
+
+        Avtomobil a = new Avtomobil(marka, power, volume);
+        System.out.println("\nДанные автомобиля:");
+        System.out.println(a.toString());
+
+        System.out.print("\nВведите количество посадочных мест: ");
+        int seats = sc.nextInt();
+
+        LegkovoyAvtomobil la =
+                new LegkovoyAvtomobil(marka, power, volume, seats);
+
+        System.out.println("\nДанные легкового автомобиля:");
+        System.out.println(la.toString());
+
+        System.out.print("\nВведите новое количество мест: ");
+        int newSeats = sc.nextInt();
+        la.setSeats(newSeats);
+
+        System.out.println("\nПосле изменения:");
+        System.out.println(la.toString());
+    }
+}

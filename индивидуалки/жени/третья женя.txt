@@ -1,0 +1,163 @@
+class Client {
+    private String fio;
+    private String address;
+    private String order;
+    private String phone;
+
+    Client(String fio, String address, String order, String phone) {
+        this.fio = fio;
+        this.address = address;
+        this.order = order;
+        this.phone = phone;
+    }
+
+    String getFio() {
+        return fio;
+    }
+
+    String getAddress() {
+        return address;
+    }
+
+    String getOrder() {
+        return order;
+    }
+
+    String getPhone() {
+        return phone;
+    }
+
+    void setFio(String fio) {
+        this.fio = fio;
+    }
+
+    void setAddress(String address) {
+        this.address = address;
+    }
+
+    void setOrder(String order) {
+        this.order = order;
+    }
+
+    void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String toString() {
+        return "Клиент: " + fio +
+                "\nАдрес: " + address +
+                "\nЗаказ: " + order +
+                "\nТелефон: " + phone + "\n";
+    }
+}
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+
+class ClientBase {
+    ArrayList<Client> a;
+
+    ClientBase() {
+        a = new ArrayList<Client>();
+    }
+
+    void add(Client c) {
+        a.add(c);
+    }
+
+    void del(String fio) {
+        int p = -1;
+        for (int i = 0; i < a.size(); i++) {
+            if (fio.equalsIgnoreCase(a.get(i).getFio()))
+                p = i;
+        }
+        if (p > -1) {
+            a.remove(p);
+            System.out.println("Удален клиент " + fio);
+        } else
+            System.out.println("Такого клиента нет");
+    }
+
+    void findByPhone(String phone) {
+        for (Client c : a) {
+            if (c.getPhone().equals(phone)) {
+                System.out.println(c);
+                return;
+            }
+        }
+        System.out.println("Клиент не найден");
+    }
+
+    void sortByFio() {
+        Collections.sort(a, new Comparator<Client>() {
+            public int compare(Client o1, Client o2) {
+                return o1.getFio().compareToIgnoreCase(o2.getFio());
+            }
+        });
+    }
+
+    void sortByPhone() {
+        Collections.sort(a, new Comparator<Client>() {
+            public int compare(Client o1, Client o2) {
+                return o1.getPhone().compareTo(o2.getPhone());
+            }
+        });
+    }
+
+    void print() {
+        for (int i = 0; i < a.size(); i++)
+            System.out.println(a.get(i).toString());
+    }
+}
+
+import java.util.Scanner;
+
+public class ClientProject {
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+        Scanner scL = new Scanner(System.in);
+
+        ClientBase cb = new ClientBase();
+
+        System.out.println("Введите количество клиентов");
+        int n = sc.nextInt();
+
+        for (int i = 0; i < n; i++) {
+            System.out.println("Введите ФИО");
+            String fio = scL.nextLine();
+
+            System.out.println("Введите адрес");
+            String address = scL.nextLine();
+
+            System.out.println("Введите данные заказа");
+            String order = scL.nextLine();
+
+            System.out.println("Введите телефон");
+            String phone = scL.nextLine();
+
+            Client c = new Client(fio, address, order, phone);
+            cb.add(c);
+        }
+
+        System.out.println("\nСписок клиентов:");
+        cb.print();
+
+        System.out.println("Введите телефон для поиска");
+        String ph = scL.nextLine();
+        cb.findByPhone(ph);
+
+        System.out.println("Введите ФИО клиента для удаления");
+        String f = scL.nextLine();
+        cb.del(f);
+
+        System.out.println("\nСортировка по ФИО:");
+        cb.sortByFio();
+        cb.print();
+
+        System.out.println("\nСортировка по телефону:");
+        cb.sortByPhone();
+        cb.print();
+    }
+}

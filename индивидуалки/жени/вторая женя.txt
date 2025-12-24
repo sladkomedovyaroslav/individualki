@@ -1,0 +1,108 @@
+import java.util.Scanner;
+
+// Интерфейс Pair
+interface Pair {
+    Pair add(Pair p);
+    Pair sub(Pair p);
+    Pair mul(Pair p);
+    Pair div(Pair p);
+    void print();
+}
+
+// Класс Money (деньги)
+class Money implements Pair {
+    double value;
+
+    Money(double value) {
+        this.value = value;
+    }
+
+    public Pair add(Pair p) {
+        Money m = (Money) p;
+        return new Money(this.value + m.value);
+    }
+
+    public Pair sub(Pair p) {
+        Money m = (Money) p;
+        return new Money(this.value - m.value);
+    }
+
+    public Pair mul(Pair p) {
+        Money m = (Money) p;
+        return new Money(this.value * m.value);
+    }
+
+    public Pair div(Pair p) {
+        Money m = (Money) p;
+        return new Money(this.value / m.value);
+    }
+
+    public void print() {
+        System.out.println("Money = " + value);
+    }
+}
+
+// Класс Fraction (дробь)
+class Fraction implements Pair {
+    int a; // числитель
+    int b; // знаменатель
+
+    Fraction(int a, int b) {
+        this.a = a;
+        this.b = b;
+    }
+
+    public Pair add(Pair p) {
+        Fraction f = (Fraction) p;
+        return new Fraction(a * f.b + f.a * b, b * f.b);
+    }
+
+    public Pair sub(Pair p) {
+        Fraction f = (Fraction) p;
+        return new Fraction(a * f.b - f.a * b, b * f.b);
+    }
+
+    public Pair mul(Pair p) {
+        Fraction f = (Fraction) p;
+        return new Fraction(a * f.a, b * f.b);
+    }
+
+    public Pair div(Pair p) {
+        Fraction f = (Fraction) p;
+        return new Fraction(a * f.b, b * f.a);
+    }
+
+    public void print() {
+        System.out.println("Fraction = " + a + "/" + b);
+    }
+}
+
+// Главный класс
+public class InterfacePair {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        Pair[] arr = new Pair[2];
+
+        System.out.println("Введите деньги:");
+        double m = sc.nextDouble();
+        arr[0] = new Money(m);
+
+        System.out.println("Введите дробь (числитель и знаменатель):");
+        int a = sc.nextInt();
+        int b = sc.nextInt();
+        arr[1] = new Fraction(a, b);
+
+        System.out.println("\nВывод объектов:");
+        arr[0].print();
+        arr[1].print();
+
+        System.out.println("\nПример операций (деньги):");
+        Pair res1 = arr[0].add(new Money(100));
+        res1.print();
+
+        System.out.println("\nПример операций (дроби):");
+        Pair res2 = arr[1].mul(new Fraction(2, 3));
+        res2.print();
+    }
+}
