@@ -1,14 +1,16 @@
 import java.util.Scanner;
 
 // Интерфейс Integer
-interface Integer {
-    Integer add(Integer x);
-    Integer sub(Integer x);
+import java.util.*;
+interface MyInteger {
+    MyInteger add(MyInteger x);
+    MyInteger sub(MyInteger x);
     void print();
 }
 
+
 // Класс Decimal (десятичное число)
-class Decimal implements Integer {
+class Decimal implements MyInteger {
     int[] digits;   // массив цифр
     int value;      // числовое значение
 
@@ -21,12 +23,12 @@ class Decimal implements Integer {
         }
     }
 
-    public Integer add(Integer x) {
+    public MyInteger add(MyInteger x) {
         Decimal d = (Decimal) x;
         return new Decimal(this.value + d.value);
     }
 
-    public Integer sub(Integer x) {
+    public MyInteger sub(MyInteger x) {
         Decimal d = (Decimal) x;
         return new Decimal(this.value - d.value);
     }
@@ -40,28 +42,33 @@ class Decimal implements Integer {
 }
 
 // Класс Binary (двоичное число)
-class Binary implements Integer {
-    int[] digits;   // массив цифр
-    int value;      // значение в десятичной системе
+import java.util.*;
+
+class Binary implements MyInteger {
+    int[] digits;
+    int value;
 
     Binary(String bin) {
         digits = new int[bin.length()];
         for (int i = 0; i < bin.length(); i++) {
             digits[i] = bin.charAt(i) - '0';
         }
-        value = Integer.parseInt(bin, 2);
+
+        value = java.lang.Integer.parseInt(bin, 2);
     }
 
-    public Integer add(Integer x) {
+    public MyInteger add(MyInteger x) {
         Binary b = (Binary) x;
         int res = this.value + b.value;
-        return new Binary(Integer.toBinaryString(res));
+
+        return new Binary(java.lang.Integer.toBinaryString(res));
     }
 
-    public Integer sub(Integer x) {
+    public MyInteger sub(MyInteger x) {
         Binary b = (Binary) x;
         int res = this.value - b.value;
-        return new Binary(Integer.toBinaryString(res));
+
+        return new Binary(java.lang.Integer.toBinaryString(res));
     }
 
     public void print() {
@@ -72,35 +79,36 @@ class Binary implements Integer {
     }
 }
 
+
 // Главный класс
 public class InterfaceInteger {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
-        Integer[] arr;
+        MyInteger[] arr;
 
-        System.out.print("Введите количество элементов: ");
+        System.out.print("Vvedite kol-vo elementov: ");
         int k = sc.nextInt();
-        arr = new Integer[k];
+        arr = new MyInteger[k];
 
         for (int i = 0; i < k; i++) {
             System.out.println("1 - Decimal, 2 - Binary");
             int p = sc.nextInt();
 
             if (p == 1) {
-                System.out.print("Введите десятичное число: ");
+                System.out.print("Vvedite desyatichnoe cislo: ");
                 int v = sc.nextInt();
                 arr[i] = new Decimal(v);
             }
 
             if (p == 2) {
-                System.out.print("Введите двоичное число: ");
+                System.out.print("Vvedite dvoichnoe cislo: ");
                 String b = sc.next();
                 arr[i] = new Binary(b);
             }
         }
 
-        System.out.println("\nВывод элементов:");
+        System.out.println("\nVivod elementov:");
         for (int i = 0; i < k; i++) {
             arr[i].print();
         }
