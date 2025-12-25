@@ -40,11 +40,12 @@ class Samolyot {
 
     // вывод информации
     public String toString() {
-        return "Марка самолета: " + marka +
-                "\nОбъем топливного бака: " + fuelVolume +
-                "\nМаксимальная дальность полета: " + maxRange;
+        return "Marka samoleta: " + marka +
+                "\nObiem toplivnogo baka: " + fuelVolume +
+                "\nMaks dalnost poleta: " + maxRange;
     }
 }
+
 
 // Производный класс Пассажирский самолет
 class PassazhirskiySamolyot extends Samolyot {
@@ -67,44 +68,47 @@ class PassazhirskiySamolyot extends Samolyot {
     // вывод информации
     public String toString() {
         return super.toString() +
-                "\nКоличество посадочных мест: " + seats;
+                "\nKol-vo posadochnih mest: " + seats;
     }
 }
 
 // Главный класс
+
+import java.util.Scanner;
+
 public class ExtendsSamolyot {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         Scanner scLine = new Scanner(System.in);
 
-        System.out.println("Введите данные самолета");
-        System.out.print("Введите марку: ");
+        System.out.println("Vvedite dannie samoleta");
+        System.out.print("Vvedite marku: ");
         String marka = scLine.nextLine();
 
-        System.out.print("Введите объем топливного бака: ");
+        System.out.print("Vvedite obiem toplivnogo baka: ");
         double fuel = sc.nextDouble();
 
-        System.out.print("Введите максимальную дальность полета: ");
+        System.out.print("Vvedite maksimalnyu dalnost poleta: ");
         int range = sc.nextInt();
 
         Samolyot s = new Samolyot(marka, fuel, range);
-        System.out.println("\nДанные самолета:");
+        System.out.println("\nDannie samoleta:");
         System.out.println(s.toString());
 
-        System.out.print("\nВведите количество посадочных мест: ");
+        System.out.print("\nVvedite kol-vo posadochnih mest: ");
         int seats = sc.nextInt();
 
         PassazhirskiySamolyot ps =
                 new PassazhirskiySamolyot(marka, fuel, range, seats);
 
-        System.out.println("\nДанные пассажирского самолета:");
+        System.out.println("\nDannie passagiskogo samoleta:");
         System.out.println(ps.toString());
 
-        System.out.print("\nВведите новое количество мест: ");
+        System.out.print("\nVvedite novoe kol-vo mest: ");
         int newSeats = sc.nextInt();
         ps.setSeats(newSeats);
 
-        System.out.println("\nПосле изменения:");
+        System.out.println("\nPosle Izmenenia:");
         System.out.println(ps.toString());
     }
 }
