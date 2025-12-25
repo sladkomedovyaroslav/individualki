@@ -44,12 +44,13 @@ class Client {
     }
 
     public String toString() {
-        return "Клиент: " + fio +
-                "\nАдрес: " + address +
-                "\nЗаказ: " + order +
-                "\nТелефон: " + phone + "\n";
+        return "Klient: " + fio +
+                "\nAdres: " + address +
+                "\nZakaz: " + order +
+                "\nTelephon: " + phone + "\n";
     }
 }
+
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -74,9 +75,9 @@ class ClientBase {
         }
         if (p > -1) {
             a.remove(p);
-            System.out.println("Удален клиент " + fio);
+            System.out.println("Udalen klient " + fio);
         } else
-            System.out.println("Такого клиента нет");
+            System.out.println("Takogo klienta net");
     }
 
     void findByPhone(String phone) {
@@ -86,7 +87,7 @@ class ClientBase {
                 return;
             }
         }
-        System.out.println("Клиент не найден");
+        System.out.println("Klient ne naiden");
     }
 
     void sortByFio() {
@@ -121,42 +122,42 @@ public class ClientProject {
 
         ClientBase cb = new ClientBase();
 
-        System.out.println("Введите количество клиентов");
+        System.out.println("Vvedite kol-vo klientov");
         int n = sc.nextInt();
 
         for (int i = 0; i < n; i++) {
-            System.out.println("Введите ФИО");
+            System.out.println("Vvedite FIO");
             String fio = scL.nextLine();
 
-            System.out.println("Введите адрес");
+            System.out.println("Vvedite adres");
             String address = scL.nextLine();
 
-            System.out.println("Введите данные заказа");
+            System.out.println("Vvedite dannie zakaza");
             String order = scL.nextLine();
 
-            System.out.println("Введите телефон");
+            System.out.println("Vvedite telefon");
             String phone = scL.nextLine();
 
             Client c = new Client(fio, address, order, phone);
             cb.add(c);
         }
 
-        System.out.println("\nСписок клиентов:");
+        System.out.println("\nSpisok klientov:");
         cb.print();
 
-        System.out.println("Введите телефон для поиска");
+        System.out.println("Vvedite telefon dlya poiska");
         String ph = scL.nextLine();
         cb.findByPhone(ph);
 
-        System.out.println("Введите ФИО клиента для удаления");
+        System.out.println("Vvedite FIO klienta dlya udalenia");
         String f = scL.nextLine();
         cb.del(f);
 
-        System.out.println("\nСортировка по ФИО:");
+        System.out.println("\nSortirovka po FIO:");
         cb.sortByFio();
         cb.print();
 
-        System.out.println("\nСортировка по телефону:");
+        System.out.println("\nSortirovka po telefonu:");
         cb.sortByPhone();
         cb.print();
     }
