@@ -1,111 +1,103 @@
-import java.util.Scanner;
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <clocale>
 
-// Базовый класс Автомобиль
-class Avtomobil {
-    private String marka;      // марка
-    private int power;         // мощность
-    private double volume;     // объем двигателя
+using namespace std;
 
-    Avtomobil(String marka, int power, double volume) {
-        this.marka = marka;
-        this.power = power;
-        this.volume = volume;
-    }
+int main() {
+    setlocale(LC_ALL, "Russian");
 
-    // getters
-    String getMarka() {
-        return marka;
-    }
+    // Открываем файл
+    ifstream input("matrix.txt");
 
-    int getPower() {
-        return power;
-    }
+    if (!input) {
+        cerr << "Не удалось открыть файл matrix.txt" << endl;
+        return 1;
+    }
 
-    double getVolume() {
-        return volume;
-    }
+    // Считываем количество уравнений и неизвестных
+    int rows, cols;
+    input >> rows >> cols;
 
-    // setters
-    void setMarka(String marka) {
-        this.marka = marka;
-    }
+    // Создаем матрицу коэффициентов и столбец свободных членов
+    vector<vector<double>> matrix(rows, vector<double>(cols));
+    vector<double> rhs(rows);
 
-    void setPower(int power) {
-        this.power = power;
-    }
+    // Считываем данные из файла
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            input >> matrix[i][j];
+        }
 
-    void setVolume(double volume) {
-        this.volume = volume;
-    }
+        input >> rhs[i];
+    }
 
-    // вывод информации
-    public String toString() {
-        return "Marka avtomobila: " + marka +
-                "\nMoshnost: " + power +
-                "\nObiem dvigatelya: " + volume;
-    }
-}
+    input.close();
 
-// Производный класс Легковой автомобиль
-class LegkovoyAvtomobil extends Avtomobil {
-    private int seats; // количество посадочных мест
+    // Вывод расширенной матрицы
+    cout << "Расширенная матрица:" << endl;
 
-    LegkovoyAvtomobil(String marka, int power, double volume, int seats) {
-        super(marka, power, volume);
-        this.seats = seats;
-    }
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            cout << matrix[i][j] << "\t";
+        }
 
-    // переназначение количества мест
-    void setSeats(int seats) {
-        this.seats = seats;
-    }
+        cout << "| " << rhs[i] << endl;
+    }
 
-    int getSeats() {
-        return seats;
-    }
+    cout << endl;
 
-    // вывод информации
-    public String toString() {
-        return super.toString() +
-                "\nKol-vo posadochnih mest: " + seats;
-    }
-}
+    // Прямой ход метода Гаусса
+    for (int k = 0; k < cols - 1; ++k) {
 
-// Главный класс
-import java.util.Scanner;
-public class ExtendsAvtomobil {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        Scanner scLine = new Scanner(System.in);
+        if (matrix[k][k] == 0.0) {
+            cerr << "Ведущий элемент равен нулю" << endl;
+            return 1;
+        }
 
-        System.out.println("Vvedite dannie avto");
-        System.out.print("Vvedite marku: ");
-        String marka = scLine.nextLine();
+        for (int i = k + 1; i < rows; ++i) {
 
-        System.out.print("Vvedite moshnost: ");
-        int power = sc.nextInt();
+            double factor = matrix[i][k] / matrix[k][k];
 
-        System.out.print("Vvedite obiem dvigatelya: ");
-        double volume = sc.nextDouble();
+            // Преобразуем свободный член
+            rhs[i] -= factor * rhs[k];
 
-        Avtomobil a = new Avtomobil(marka, power, volume);
-        System.out.println("\nDannie avto:");
-        System.out.println(a.toString());
+            // Преобразуем коэффициенты
+            for (int j = k; j < cols; ++j) {
+                matrix[i][j] -= factor * matrix[k][j];
+            }
+        }
+    }
 
-        System.out.print("\nVvedite kol-vo posadochnih mest: ");
-        int seats = sc.nextInt();
+   
 
-        LegkovoyAvtomobil la =
-                new LegkovoyAvtomobil(marka, power, volume, seats);
+    // Обратный ход
+    vector<double> solution(cols);
 
-        System.out.println("\nDannie legkovogo avtomobilya:");
-        System.out.println(la.toString());
+    for (int i = cols - 1; i >= 0; --i) {
 
-        System.out.print("\nVVedite novoe kol-vo mest: ");
-        int newSeats = sc.nextInt();
-        la.setSeats(newSeats);
+        double value = rhs[i];
 
-        System.out.println("\nPosle izmenenia:");
-        System.out.println(la.toString());
-    }
+        // Вычитаем уже найденные неизвестные
+        for (int j = i + 1; j < cols; ++j) {
+            value -= matrix[i][j] * solution[j];
+        }
+
+        if (matrix[i][i] == 0.0) {
+            cerr << "Деление на ноль при нахождении решения" << endl;
+            return 1;
+        }
+
+        solution[i] = value / matrix[i][i];
+    }
+
+    // Вывод решения
+    cout << "Решение системы:" << endl;
+
+    for (int i = 0; i < cols; ++i) {
+        cout << "x" << i + 1 << " = " << solution[i] << endl;
+    }
+
+    return 0;
 }
