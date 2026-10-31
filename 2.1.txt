@@ -1,0 +1,150 @@
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <cmath>
+#include <iomanip>
+
+using namespace std;
+
+// Функция решения СЛАУ методом Гаусса с постолбцовым выбором главного элемента
+// (строго по алгоритму из методички)
+vector<double> solveGauss(vector<vector<double>> A, vector<double> b) {
+    int n = A.size();
+
+    // --- ПРЯМОЙ ХОД ---
+    for (int k = 0; k < n - 1; k++) {
+        // 1. Поиск главного элемента в столбце k
+        int pivot = k;
+        double maxAbs = fabs(A[k][k]);
+        for (int i = k + 1; i < n; i++) {
+            if (fabs(A[i][k]) > maxAbs) {
+                maxAbs = fabs(A[i][k]);
+                pivot = i;
+            }
+        }
+
+        // Если элемент слишком мал — матрица вырождена
+        if (maxAbs < 1e-12) {
+            cout << "Ошибка: матрица вырождена или близка к ней!\n";
+            return {};
+        }
+
+        // 2. Перестановка строк
+        if (pivot != k) {
+            swap(A[k], A[pivot]);
+            swap(b[k], b[pivot]);
+        }
+
+        // 3. Исключение неизвестного
+        for (int i = k + 1; i < n; i++) {
+            double l = A[i][k] / A[k][k];
+            b[i] -= l * b[k];
+            for (int j = k; j < n; j++) {
+                A[i][j] -= l * A[k][j];
+            }
+        }
+    }
+
+    // --- ОБРАТНЫЙ ХОД ---
+    vector<double> x(n);
+    x[n - 1] = b[n - 1] / A[n - 1][n - 1];
+
+    for (int k = n - 2; k >= 0; k--) {
+        double sum = 0.0;
+        for (int j = k + 1; j < n; j++) {
+            sum += A[k][j] * x[j];
+        }
+        x[k] = (b[k] - sum) / A[k][k];
+    }
+
+    return x;
+}
+
+int main() {
+    setlocale(LC_ALL, "Russian");
+
+    // --- 1. Чтение исходных данных ---
+    ifstream fin("data.txt");
+    if (!fin.is_open()) {
+        cout << "Не найден файл data.txt! Создайте его и впишите туда точки.\n";
+        return 1;
+    }
+
+    int numPoints;
+    fin >> numPoints;
+
+    vector<double> X(numPoints), Y(numPoints);
+    for (int i = 0; i < numPoints; i++) {
+        fin >> X[i] >> Y[i];
+    }
+    fin.close();
+
+    // --- 2. Построение СЛАУ (матрицы Вандермонда) ---
+    // Размерность системы = количеству точек (numPoints)
+    int n = numPoints; 
+    vector<vector<double>> A(n, vector<double>(n));
+    vector<double> b(n);
+
+    for (int i = 0; i < n; i++) {
+        b[i] = Y[i]; // Свободные члены - это значения Y
+        double x_pow = 1.0;
+        for (int j = 0; j < n; j++) {
+            A[i][j] = x_pow; // 1, x, x^2, x^3...
+            x_pow *= X[i];   // Наращиваем степень
+        }
+    }
+
+    cout << "Построена матрица Вандермонда " << n << "x" << n << "\n";
+    cout << "Решение СЛАУ (коэффициенты многочлена a0, a1, a2...):\n";
+
+    // --- 3. Решение СЛАУ ---
+    vector<double> coeffs = solveGauss(A, b);
+
+    if (coeffs.empty()) return 1;
+
+    cout << fixed << setprecision(4);
+    for (int i = 0; i < n; i++) {
+        cout << "a" << i << " = " << coeffs[i] << "\n";
+    }
+
+    // --- 4. Генерация данных для Excel (Визуализация) ---
+    ofstream fout("output.csv");
+    // Пишем заголовки для Excel
+    fout << "X;Y_исходный;Y_интерполяция\n";
+
+    // Сначала запишем исходные точки, чтобы они были на графике крестиками/точками
+    for (int i = 0; i < n; i++) {
+        fout << X[i] << ";" << Y[i] << ";\n";
+    }
+    
+    // Теперь сгенерируем много точек для плавной линии графика
+    // Найдем мин и макс X
+    double minX = X[0], maxX = X[0];
+    for(int i=1; i<n; i++){
+        if(X[i] < minX) minX = X[i];
+        if(X[i] > maxX) maxX = X[i];
+    }
+
+    int steps = 50; // Количество точек для графика
+    double step = (maxX - minX) / steps;
+
+    for (int i = 0; i <= steps; i++) {
+        double x_val = minX + i * step;
+        
+        // Вычисляем значение многочлена P(x) по схеме Горнера (быстро и точно)
+        double y_val = 0;
+        for (int j = n - 1; j >= 0; j--) {
+            y_val = y_val * x_val + coeffs[j];
+        }
+        
+        // Записываем в CSV: X, пустой Y_исходный, вычисленный Y_интерполяция
+        fout << x_val << ";;" << y_val << "\n";
+    }
+
+    fout.close();
+
+    cout << "\nДанные для графика сохранены в файл output.csv\n";
+    cout << "Откройте его в Excel и постройте точечную диаграмму.\n";
+
+    return 0;
+}
