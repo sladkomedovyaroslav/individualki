@@ -1,103 +1,119 @@
-#include <iostream>
-#include <fstream>
-#include <vector>
-#include <clocale>
-
+#include <iostream> #include <fstream> #include <vector> #include <iomanip> #include <cmath> #include <locale>
 using namespace std;
+int main() { setlocale(LC_ALL, "Russian");
+ifstream fin("input.txt");
 
-int main() {
-    setlocale(LC_ALL, "Russian");
+if (!fin.is_open())
+{
+    cout << "Ошибка открытия файла input.txt" << endl;
+    return 1;
+}
 
-    // Открываем файл
-    ifstream input("matrix.txt");
+int n;
+fin >> n;
 
-    if (!input) {
-        cerr << "Не удалось открыть файл matrix.txt" << endl;
-        return 1;
-    }
+if (n < 2)
+{
+    cout << "Количество точек должно быть не меньше 2" << endl;
+    return 1;
+}
 
-    // Считываем количество уравнений и неизвестных
-    int rows, cols;
-    input >> rows >> cols;
+vector<double> x(n), y(n);
 
-    // Создаем матрицу коэффициентов и столбец свободных членов
-    vector<vector<double>> matrix(rows, vector<double>(cols));
-    vector<double> rhs(rows);
+// Считываем табличные значения из файла
+for (int i = 0; i < n; i++)
+{
+    fin >> x[i] >> y[i];
+}
 
-    // Считываем данные из файла
-    for (int i = 0; i < rows; ++i) {
-        for (int j = 0; j < cols; ++j) {
-            input >> matrix[i][j];
-        }
+// Считываем границы отрезка и количество интервалов
+double xmin, xmax;
+int m;
 
-        input >> rhs[i];
-    }
+fin >> xmin >> xmax >> m;
 
-    input.close();
+fin.close();
 
-    // Вывод расширенной матрицы
-    cout << "Расширенная матрица:" << endl;
+if (xmin >= xmax || m < 1)
+{
+    cout << "Некорректные границы отрезка или количество интервалов" << endl;
+    return 1;
+}
 
-    for (int i = 0; i < rows; ++i) {
-        for (int j = 0; j < cols; ++j) {
-            cout << matrix[i][j] << "\t";
-        }
+// Проверяем, чтобы значения X не повторялись
+for (int i = 0; i < n; i++)
+{
+    for (int j = i + 1; j < n; j++)
+    {
+        if (x[i] == x[j])
+        {
+            cout << "Ошибка: значения X должны быть различными" << endl;
+            return 1;
+        }
+    }
+}
 
-        cout << "| " << rhs[i] << endl;
-    }
+// Вывод интерполяционного многочлена
+cout << "Интерполяционный многочлен Лагранжа:" << endl;
+cout << "P(x) = ";
 
-    cout << endl;
+for (int i = 0; i < n; i++)
+{
+    cout << y[i] << " * ";
 
-    // Прямой ход метода Гаусса
-    for (int k = 0; k < cols - 1; ++k) {
+    bool first = true;
 
-        if (matrix[k][k] == 0.0) {
-            cerr << "Ведущий элемент равен нулю" << endl;
-            return 1;
-        }
+    for (int j = 0; j < n; j++)
+    {
+        if (j != i)
+        {
+            if (!first)
+                cout << " * ";
 
-        for (int i = k + 1; i < rows; ++i) {
+            cout << "(x - " << x[j] << ")/("
+                 << x[i] << " - " << x[j] << ")";
 
-            double factor = matrix[i][k] / matrix[k][k];
+            first = false;
+        }
+    }
 
-            // Преобразуем свободный член
-            rhs[i] -= factor * rhs[k];
+    if (i < n - 1)
+        cout << " + ";
+}
 
-            // Преобразуем коэффициенты
-            for (int j = k; j < cols; ++j) {
-                matrix[i][j] -= factor * matrix[k][j];
-            }
-        }
-    }
+cout << endl;
 
-   
+// Вывод таблицы значений для Excel
+cout << "\nТаблица значений для Excel:" << endl;
 
-    // Обратный ход
-    vector<double> solution(cols);
+cout.imbue(locale(""));
+cout << fixed << setprecision(2);
 
-    for (int i = cols - 1; i >= 0; --i) {
+cout << "X\tP(X)" << endl;
 
-        double value = rhs[i];
+for (int k = 0; k <= m; k++)
+{
+    double X = xmin + (xmax - xmin) * k / m;
+    double Y = 0;
 
-        // Вычитаем уже найденные неизвестные
-        for (int j = i + 1; j < cols; ++j) {
-            value -= matrix[i][j] * solution[j];
-        }
+    // Вычисление по формуле Лагранжа
+    for (int i = 0; i < n; i++)
+    {
+        double L = 1;
 
-        if (matrix[i][i] == 0.0) {
-            cerr << "Деление на ноль при нахождении решения" << endl;
-            return 1;
-        }
+        for (int j = 0; j < n; j++)
+        {
+            if (j != i)
+            {
+                L *= (X - x[j]) / (x[i] - x[j]);
+            }
+        }
 
-        solution[i] = value / matrix[i][i];
-    }
+        Y += y[i] * L;
+    }
 
-    // Вывод решения
-    cout << "Решение системы:" << endl;
+    cout << X << "\t" << Y << endl;
+}
 
-    for (int i = 0; i < cols; ++i) {
-        cout << "x" << i + 1 << " = " << solution[i] << endl;
-    }
-
-    return 0;
+return 0;
 }
