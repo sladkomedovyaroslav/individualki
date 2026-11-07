@@ -150,3 +150,144 @@ public class MuseumProject {
         m.print();
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+.....
+
+
+
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <iomanip>
+#include <cmath>
+#include <locale>
+
+using namespace std;
+
+int main() {
+    // Установка русской локали для корректного отображения кириллицы в консоли
+    setlocale(LC_ALL, "Russian");
+
+    ifstream fin("input.txt");
+
+    if (!fin.is_open()) {
+        cout << "Ошибка открытия файла input.txt" << endl;
+        return 1;
+    }
+
+    int n;
+    fin >> n;
+
+    if (n < 2) {
+        cout << "Количество точек должно быть не меньше 2" << endl;
+        return 1;
+    }
+
+    vector<double> x(n), y(n);
+
+    // Считываем табличные значения из файла
+    for (int i = 0; i < n; i++) {
+        fin >> x[i] >> y[i];
+    }
+
+    // Считываем границы отрезка и количество интервалов
+    double xmin, xmax;
+    int m;
+
+    fin >> xmin >> xmax >> m;
+    fin.close();
+
+    if (xmin >= xmax || m < 1) {
+        cout << "Некорректные границы отрезка или количество интервалов" << endl;
+        return 1;
+    }
+
+    // Проверяем, чтобы значения X не повторялись
+    for (int i = 0; i < n; i++) {
+        for (int j = i + 1; j < n; j++) {
+            if (x[i] == x[j]) {
+                cout << "Ошибка: значения X должны быть различными" << endl;
+                return 1;
+            }
+        }
+    }
+
+    // --- 1. ВЫВОД МНОГОЧЛЕНА В КОНСОЛЬ ---
+    cout << "Интерполяционный многочлен Лагранжа:" << endl;
+    cout << "P(x) = ";
+
+    for (int i = 0; i < n; i++) {
+        cout << y[i] << " * ";
+        bool first = true;
+
+        for (int j = 0; j < n; j++) {
+            if (j != i) {
+                if (!first) cout << " * ";
+                cout << "(x - " << x[j] << ")/(" << x[i] << " - " << x[j] << ")";
+                first = false;
+            }
+        }
+        if (i < n - 1) cout << " + ";
+    }
+    cout << endl;
+
+    // --- 2. РАСЧЕТ И ВЫВОД ТАБЛИЦЫ ---
+    
+    // Открываем файл для записи результатов (для Excel)
+    ofstream fout("output.txt");
+    if (!fout.is_open()) {
+        cout << "Ошибка создания файла output.txt" << endl;
+        return 1;
+    }
+
+    cout << "\nТаблица значений:" << endl;
+    cout << "X\tP(X)" << endl;
+
+    // ВАЖНО: Принудительно используем точку как разделитель (классическая локаль C)
+    // Это гарантирует, что Excel правильно поймет числа из консоли и файла.
+    cout.imbue(locale("C")); 
+    fout.imbue(locale("C"));
+    
+    cout << fixed << setprecision(4);
+    fout << fixed << setprecision(4);
+    
+    // Записываем заголовки в файл
+    fout << "X\tP(X)" << endl;
+
+    for (int k = 0; k <= m; k++) {
+        // Вычисляем текущий X
+        double X = xmin + (xmax - xmin) * k / m;
+        double Y = 0;
+
+        // Вычисление по формуле Лагранжа
+        for (int i = 0; i < n; i++) {
+            double L = 1;
+            for (int j = 0; j < n; j++) {
+                if (j != i) {
+                    L *= (X - x[j]) / (x[i] - x[j]);
+                }
+            }
+            Y += y[i] * L;
+        }
+        
+        // Вывод в консоль и в файл
+        cout << X << "\t" << Y << endl;
+        fout << X << "\t" << Y << endl;
+    }
+
+    fout.close();
+    cout << "\nРезультаты успешно сохранены в файл output.txt" << endl;
+    cout << "Скопируйте данные из output.txt в Excel для построения графика." << endl;
+
+    return 0;
+}
